@@ -1,3 +1,7 @@
+# Inititative of One-On-One Fitness Network for Onefit.app
+This is a starter project to build an app plugin that used 3D technology to log and visualize training/fitness interactions through Onefit.app.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -12,11 +12,10 @@ import { PMREMGenerator } from 'three';
 const ThreeApp = (cameraView) => {
   const mount = useRef(null);
 
+  let geometry, material, texture, mesh;
+
   // Get cameraView prop
   // const { cameraView } = props;
-
-  let axesScene, axesCamera, axesRenderer, mesh;
-  let geometry, material, texture;
 
   // Create an AxesHelper and add it to the axesScene
   const axesHelper = new THREE.AxesHelper(5);
@@ -37,9 +36,11 @@ const ThreeApp = (cameraView) => {
   const fontloader = new FontLoader();
 
   useEffect(() => {
-    let scene, camera, renderer, points, controls;
+    let scene, camera, renderer, points, controls, mesh;
+    let axesScene, axesCamera, axesRenderer;
+    // let geometry, material, texture;
 
-    const init = () => {
+    const init = (cameraView) => {
       // Main Scene
       scene = new THREE.Scene();
       // scene.background = new THREE.Color(0x000000);
@@ -111,75 +112,88 @@ const ThreeApp = (cameraView) => {
       controls = new OrbitControls(camera, renderer.domElement);
 
       // Cylinder
-      // geometry = new THREE.CylinderGeometry(1, 1, 2, 32);
-      // material = new THREE.MeshBasicMaterial({ color: 0xffa500 });
-      // mesh = new THREE.Mesh(geometry, material);
-      // scene.add(mesh);
+      geometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+      material = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+      mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
 
       // Create a new OBJLoader instance
       const modelLoader = new OBJLoader();
 
       // Load the OBJ file
-      modelLoader.load('/media/models/male_body/Male.OBJ', function (object) {
-        // The loaded object is a group containing the model's meshes
-        // You can directly add it to the scene
-        scene.add(object);
+      // modelLoader.load('/media/models/male_body/Male.OBJ', function (object) {
+      //   // The loaded object is a group containing the model's meshes
+      //   // You can directly add it to the scene
+      //   scene.add(object);
 
-        // Create a custom material
-        const customMaterial = new THREE.MeshStandardMaterial({
-          color: 0xfffffff,
-          roughness: 0.5,
-          metalness: 0.5
-        });
+      //   // Create a custom material
+      //   const customMaterial = new THREE.MeshStandardMaterial({
+      //     color: 0xfffffff,
+      //     roughness: 0.5,
+      //     metalness: 0.5
+      //   });
 
-        // If you want to apply a material to all child meshes, you can do so here
-        object.traverse(function (child) {
-          if (child instanceof THREE.Mesh) {
-            child.material = customMaterial; // new THREE.MeshBasicMaterial({ color: 0xfffffff });
-          }
-        });
+      //   // If you want to apply a material to all child meshes, you can do so here
+      //   object.traverse(function (child) {
+      //     if (child instanceof THREE.Mesh) {
+      //       child.material = customMaterial; // new THREE.MeshBasicMaterial({ color: 0xfffffff });
+      //     }
+      //   });
 
-        // Create a directional light
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(1, 1, 1); // position the light to shine from top-right-front
-        scene.add(light);
+      //   // Create a directional light
+      //   const light = new THREE.DirectionalLight(0xffffff, 1);
+      //   light.position.set(1, 1, 1); // position the light to shine from top-right-front
+      //   scene.add(light);
 
-        // add light to the top-left-back
-        const light2 = new THREE.DirectionalLight(0xffffff, 1);
-        light2.position.set(-1, -1, -1); // position the light to shine from top-left-back
-        scene.add(light2);
+      //   // add light to the top-left-back
+      //   const light2 = new THREE.DirectionalLight(0xffffff, 1);
+      //   light2.position.set(-1, -1, -1); // position the light to shine from top-left-back
+      //   scene.add(light2);
 
-        // Create an ambient light
-        const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
-        scene.add(ambientLight);
+      //   // Create an ambient light
+      //   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+      //   scene.add(ambientLight);
 
-        // Calculate the bounding box of the entire group
-        const boundingBox = new THREE.Box3().setFromObject(object);
+      //   // Calculate the bounding box of the entire group
+      //   const boundingBox = new THREE.Box3().setFromObject(object);
 
-        // Adjust the position of the mesh so that its bottom is at Y:0
-        object.position.y = -boundingBox.min.y;
+      //   // Adjust the position of the mesh so that its bottom is at Y:0
+      //   object.position.y = -boundingBox.min.y;
 
-        // If you need to keep a reference to the mesh, you can do so here
-        mesh = object;
-      }, function (xhr) {
-        // This function is called as the model is being loaded
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-      }, function (error) {
-        // This function is called if an error occurs while loading the model
-        // console.error('An error happened', error);
-        console.log('An error happened', error);
-      });
+      //   // If you need to keep a reference to the mesh, you can do so here
+      //   mesh = object;
+      // }, function (xhr) {
+      //   // This function is called as the model is being loaded
+      //   console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+      // }, function (error) {
+      //   // This function is called if an error occurs while loading the model
+      //   // console.error('An error happened', error);
+      //   console.log('An error happened', error);
+      // });
 
       // Create a floor geometry
-      const floorGeometry = new THREE.PlaneGeometry(10, 10);
-      const floorMaterial = new THREE.MeshBasicMaterial({ color: 0xffa500 });
-      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-
+      // const floorGeometry = new THREE.PlaneGeometry(10, 10);
+      // const floorMaterial = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+      // const floor = new THREE.Mesh(floorGeometry, floorMaterial);
       // Rotate and position the floor
-      floor.rotation.x = -Math.PI / 2; // rotate it to lie flat
-      floor.position.y = 0; // position it at Y:0
+      // floor.rotation.x = -Math.PI / 2; // rotate it to lie flat
+      // floor.position.y = 0; // position it at Y:0
+      // scene.add(floor); // add it to the scene
 
-      scene.add(floor); // add it to the scene
+      // create a cylindrical mesh to replace the floor geometry
+      const circleFloorGeometry = new THREE.CircleGeometry(5, 5, 0.1, 32);
+      // const circleMaterial = new THREE.MeshBasicMaterial({ color: 0xffa500 });
+      // make material with color 0xffa500
+      const circleFloorMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffa500,
+        roughness: 0.5,
+        metalness: 0.5
+      });
+      const circleFloor = new THREE.Mesh(circleFloorGeometry, circleFloorMaterial);
+      // Rotate and position the floor
+      circleFloor.rotation.x = -Math.PI / 2; // rotate it to lie flat
+      circleFloor.position.y = 0; // position it at Y:0
+      scene.add(circleFloor);
 
       // Points (as Decals)
       points = new THREE.Group();
@@ -187,6 +201,7 @@ const ThreeApp = (cameraView) => {
 
       // AxesHelper Scene
       axesScene = new THREE.Scene();
+      axesScene.background = new THREE.Color(0x808080); // Gray color
 
       // Create an AxesHelper instance of size 1
       // const axesHelper = new THREE.AxesHelper(1);
@@ -213,9 +228,9 @@ const ThreeApp = (cameraView) => {
         const materialZ = new THREE.MeshBasicMaterial({ color: 0x0000FF }); // BLUE
 
         // Create a mesh for each label
-        const xLabel = new THREE.Mesh(xGeometry, material);
-        const yLabel = new THREE.Mesh(yGeometry, material);
-        const zLabel = new THREE.Mesh(zGeometry, material);
+        const xLabel = new THREE.Mesh(xGeometry, materialX);
+        const yLabel = new THREE.Mesh(yGeometry, materialY);
+        const zLabel = new THREE.Mesh(zGeometry, materialZ);
 
         // Position the labels
         xLabel.position.set(1.1, 0, 0);
@@ -250,7 +265,6 @@ const ThreeApp = (cameraView) => {
       // Event listeners
       window.addEventListener("resize", handleWindowResize);
       mount.current.addEventListener("dblclick", handleCanvasClick);
-      // Add a mousemove event listener to the canvas
       mount.current.addEventListener('mousemove', handleMouseMove);
 
       // Animation
@@ -356,12 +370,22 @@ const ThreeApp = (cameraView) => {
       jsHeapLabel.textContent = `Estimated memory usage: ${performance.memory.usedJSHeapSize} bytes | ${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)} MB | ${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024 / 1024)} GB`;
 
       // Update axes helper position
+      let lastClickTime = 0;
+
+      // animate/rotate the mesh/model if user has not clicked on the canvas in the last 5 seconds
+      if (mesh) {
+        if (Date.now() - lastClickTime > 5000) {
+          mesh.rotation.y += 0.01;
+          console.log('mesh rotation: ', mesh.rotation.y);
+        }
+      }
+
       axesHelper.rotation.setFromQuaternion(camera.quaternion);
       // rotate the axes labels as well
       // axesScene.rotation.setFromQuaternion(camera.quaternion);
 
-      // axesHelper.position.copy(camera.position);
-      // axesHelper.position.sub(controls.target); // this makes the helper always face towards the camera
+      axesHelper.position.copy(camera.position);
+      axesHelper.position.sub(controls.target); // this makes the helper always face towards the camera
 
       // Render main scene
       renderer.render(scene, camera);
@@ -370,25 +394,27 @@ const ThreeApp = (cameraView) => {
       axesRenderer.render(axesScene, axesCamera);
     };
 
-    init();
+    init(cameraView);
 
     return () => {
       // Cleanup
       window.removeEventListener("resize", handleWindowResize);
       mount.current.removeEventListener("click", handleCanvasClick);
+      mount.current.removeEventListener("dblclick", handleCanvasClick);
+      mount.current.removeEventListener("mousemove", handleMouseMove);
       controls.dispose();
       // You might want to clean up any additional resources here
       // such as Mesh objects, etc.
-      // geometry.dispose();
-      // material.dispose();
-      // texture.dispose();	
-      // renderer.dispose();
-      // while (scene.children.length > 0) {
-      //   const object = scene.children[0];
-      //   object.geometry.dispose();
-      //   object.material.dispose();
-      //   scene.remove(object);
-      // }
+      geometry.dispose();
+      material.dispose();
+      texture.dispose();	
+      renderer.dispose();
+      while (scene.children.length > 0) {
+        const object = scene.children[0];
+        object.geometry.dispose();
+        object.material.dispose();
+        scene.remove(object);
+      }
     };
   }, []);
 
